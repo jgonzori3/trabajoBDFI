@@ -8,10 +8,10 @@ RUN	apt-get upgrade -y
 
 RUN apt-get install git -y 
 
-RUN	git clone https://github.com/jgonzori3/Trabajo-BDFI.git
+RUN	git clone https://github.com/jgonzori3/trabajoBDFI.git
 
 # Copiamos el directorio en /app/practica_big_data_2019
-RUN	mv Trabajo-BDFI/practica_big_data_2019 . 
+RUN	mv trabajoBDFI/practica_big_data_2019 . 
 
 WORKDIR /app/practica_big_data_2019
 

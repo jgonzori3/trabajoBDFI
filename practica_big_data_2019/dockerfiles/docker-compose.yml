@@ -2,55 +2,76 @@ version: '3'
 services:
   zookeeper:
     container_name: zookeeper
-    image: gcr.io/imagenesdocker-368517/zookeeper
-    #build: zookeeper/.
+    #image: gcr.io/imagenesdocker-368517/zookeeper
+    build: zookeeper/.
     ports: 
      - "2181:2181"
     network_mode: host
+
   kafka:
     container_name: kafka
-    image: gcr.io/imagenesdocker-368517/kafka
-    #build: kafka/.
+    #image: gcr.io/imagenesdocker-368517/kafka
+    build: kafka/.
     ports:
      - "9092:9092"
     network_mode: host
     depends_on:
      - zookeeper
+
   kafka2:
     container_name: kafka2
-    image: gcr.io/imagenesdocker-368517/kafka2
-    #build: kafka2/.
+    #image: gcr.io/imagenesdocker-368517/kafka2
+    build: kafka2/.
     ports:
      - "9092:9092"
     network_mode: host
     depends_on:
      - kafka
+     
   mongo:
     container_name: mongo
-    image: gcr.io/imagenesdocker-368517/mongo
-    #build: mongo/.
+    #image: gcr.io/imagenesdocker-368517/mongo
+    build: mongo/.
     ports:
       - "27017:27017"
-    network_mode: host   
-  spark:
-    container_name: spark
-    image: gcr.io/imagenesdocker-368517/spark
-    #build: spark/.
+    network_mode: host 
+
+  # Si queremos hacer spark con local[*] => hemos quitado la linea .master(local[*]) en MakePrediction.scala => Este docker lo define en el submit (no cluster)
+  # spark:
+  #   container_name: spark
+  #   image: gcr.io/imagenesdocker-368517/spark
+  #   #build: spark/.
+  #   network_mode: host
+  #   environment: 
+  #     - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
+  #   depends_on:
+  #     - kafka2
+
+  # Spark en modo cluster
+  sparkdistribuido:
+    container_name: sparkdistribuido
+    build: sparkDistribuido/.
+    ports: 
+     - "8080:8080"
+     #- "7077:7077"
     network_mode: host
     environment: 
       - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
     depends_on:
+      - mongo
       - kafka2
+
   webflask:
     container_name: webflask
-    image: gcr.io/imagenesdocker-368517/webflask
-    #build: webflask/.
+    #image: gcr.io/imagenesdocker-368517/webflask
+    build: webflask/.
     ports:
      - "5000:5000"
     network_mode: host
     environment: 
       - PROJECT_HOME=/app/practica_big_data_2019
     depends_on:
-      - spark
-      - mongo
+      - sparkdistribuido
+      #- kafka2
+      #- mongo
 
