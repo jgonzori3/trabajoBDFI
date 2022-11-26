@@ -39,8 +39,8 @@ services:
   # Si queremos hacer spark con local[*] => hemos quitado la linea .master(local[*]) en MakePrediction.scala => Este docker lo define en el submit (no cluster)
   # spark:
   #   container_name: spark
-  #   image: gcr.io/imagenesdocker-368517/spark
-  #   #build: spark/.
+  #   #image: gcr.io/imagenesdocker-368517/spark
+  #   build: spark/.
   #   network_mode: host
   #   environment: 
   #     - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
@@ -53,7 +53,6 @@ services:
     build: sparkDistribuido/.
     ports: 
      - "8080:8080"
-     #- "7077:7077"
     network_mode: host
     environment: 
       - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
@@ -71,7 +70,7 @@ services:
     environment: 
       - PROJECT_HOME=/app/practica_big_data_2019
     depends_on:
+      #- spark
       - sparkdistribuido
-      #- kafka2
-      #- mongo
+
 
