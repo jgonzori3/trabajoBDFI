@@ -48,17 +48,30 @@ services:
   #     - kafka2
 
   # Spark en modo cluster
-  sparkdistribuido:
-    container_name: sparkdistribuido
-    build: sparkDistribuido/.
-    ports: 
-     - "8080:8080"
-    network_mode: host
-    environment: 
-      - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
-    depends_on:
-      - mongo
-      - kafka2
+  # sparkdistribuido:
+  #   container_name: sparkdistribuido
+  #   build: sparkDistribuido/.
+  #   ports: 
+  #    - "8080:8080"
+  #   network_mode: host
+  #   environment: 
+  #     - SPARK_HOME=/home/user1/trabajoBDFI/spark-3.1.2-bin-hadoop2.7
+  #   depends_on:
+  #     - mongo
+  #     - kafka2
+
+  # airflow:
+  #   container_name: airflow
+  #   build: airflow/.
+  #   ports: 
+  #    - "8084:8084"
+  #   environment: 
+  #     - PROJECT_HOME=/home/user1/trabajoBDFI/practica_big_data_2019
+  #     - AIRFLOW_HOME=/root/airflow
+  #   network_mode: host
+  #   depends_on:
+  #    # - sparkdistribuido
+  #   - kafka2
 
   webflask:
     container_name: webflask
@@ -70,7 +83,10 @@ services:
     environment: 
       - PROJECT_HOME=/app/practica_big_data_2019
     depends_on:
+      - kafka2
       #- spark
-      - sparkdistribuido
+      #- sparkdistribuido
+     # - airflow
+
 
 
