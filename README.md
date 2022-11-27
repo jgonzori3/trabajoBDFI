@@ -6,14 +6,9 @@ En esta practica se resuelve el problema de desplegar el escenario con Docker Co
 
 [ <img src="images/video_course_cover.png"> ](http://datasyndrome.com/video)
 
-## Descargar el proyecto principal 
-Para poder arrancar con el despliegue de los componentes se ha estructurado un proyecto en un repositorio de github para poderse descargar en local.
-El comando para importar el repositorio será el siguiente:
-```
-git clone https://github.com/jgonzori3/trabajo-BDFI.git
-```
 
-Debemos tener en cuenta que para este proyecto se necesita al menos trabajar en una maquina que tenga ubuntu 20 por temas de compatibilidad entre versiones.
+
+Debemos tener en cuenta que para este proyecto se necesita al menos trabajar en una maquina que tenga ubuntu 20.04 por temas de compatibilidad entre versiones.
 Se trabajará con las siguientes versiones de software: 
 
  - [Intellij](https://www.jetbrains.com/help/idea/installation-guide.html) (jdk_1.8)
@@ -29,39 +24,84 @@ Se trabajará con las siguientes versiones de software:
 
 # Procesos que se realizan
 
-1. Inicialmente se parte de un dataset que recoje infomacion sobre vuelos y retrasos de los mismos. 
+1. Descargar los datos de vuelos pasados.
 
-2. Seguidamente estos datos serviran para entrenar un Modelo de Machine Learning. estos pasos se han realizado antes de la publicacion de este repositorio y se presentan los resultados almacenados dentro de la carpeta **data** dentro del proyectos, que además ya estan almacenados en la base de datos de mongo.
+2. Entrenar modelo de Machine Learning utilizando los datos de vuelos.
 
-3. para el correcto funcionamiento del conjunto de servicios se establecen los flujos de comunicacion entre el Job de Spark y el propio servido WebFlask. esta comunicacion se ha implementado con Zookeeper y kafka y see crea un topic a al que el job de Spark se encuentra subscrito.
+3. Desplegar el job de Spark que predice el retraso de los vuelos usando el modelo creado.
 
-4. Se Utiliza PySpark con un algoritmo RandomForest para entrenar los modelos predictivos que se mencionaron anteriormente.
+4. Por medio de una interfaz web, el usuario introducirá los datos del vuelo a predecir, que se enviarán al servidor web de Flask.
 
-5. Para realizar las prediciones en base a los datos entregados por el usuario a traves del interfaz web, se ejecuta el job de Spark.
+5. El servidor web enviará estos datos al job de predicción a través de Kafka.
 
-6. El job de Spark se ejecuta usando el spark-submit con el fichero .jar que haciendo uso de las clases de Scala podrá generar un Stream al suscribirse al topic previamente creado por kafka pudiendo así subscribirse y "consumir" los datos, y además se conectará a la base de datos de mongo para incluir las predicciones.
+6. El job realizará la predicción y la guardará en Mongo.
 
-7. Finalmente se podrán mostrar las diferentes prediciones que se van generando gracias al Polling continuo que hace Flask a mongo utilizando el canal generado por kafka que se ha mencionado anteriormente. Será a traves de la interfaz web de Flask a traves de la cual se podran mandar los datos para hacer las predicciones y será por donde se podrán observar los resultados.
+7. La interfaz web está constantemente haciendo polling para comprobar si se ha realizado ya la predicción.
+
+8. En caso afirmativo, se muestra la predicción en la interfaz
 
 # Hitos alcanzados
 
-1. Lograr el funcionamiento de la práctica sin realizar modificaciones (4 puntos).
-2. Ejecución del job de predicción con Spark Submit en vez de IntelliJ (1 punto).
+1. Lograr el funcionamiento de la práctica sin realizar modificaciones ejecutando el job de prediccion con intellij (4 puntos).
+2. Ejecución del job de predicción con Spark Submit en vez de IntelliJ tanto de forma local como de forma Standalone con 2 workers(1 punto).
 3. Dockerizar cada uno de los servicios que componen la arquitectura completa. (1 punto)
 4. Desplegar el escenario completo usando docker-compose. (1 punto)
-5. Desplegar el escenario completo en Google Cloud (1 punto).
-6. Entrenar el modelo con Apache Airflow (not yet).
+5. Desplegar el escenario completo en Google Cloud en una Maquina virtual accediendo a esta a traves del gestor de Interfaces grafias de Nomachine(1 punto).
+6. Habilitar el despliegue del escenario completo en el Container Registry de Google cloud. 
+7. Se propone una solucion que utiliza Airflow como gestor de tareas en la siguiente https://github.com/jgonzori3/trabajoBDFI_v2.git
 
-Adicionalmente se ha trabajado en una máquina virtual creada en el cloud de google y habremos estado trabajando en ella a traves de su interfaz gráfica. Para conectarnos a ella en remoto hemos utilizado la aplicacion NoMachine que nos permite cómodamente conectarnos. 
-Esto ha sido posible porque se ha configurado la maquina virtual para que el Firewall permita trafico http y https, y adicionalmente se ha creado una regla en el firewall que hemos llamado nomachine con un rango de IPs 0.0.0.0/0, para garantizar que podemos conectarnos desde el exterior, configurando el puerto tcp de acceso =4000.
+Para complementar la solución desplegada en cloud (punto 6 de hitos alcanzados) se han publicado en Google Cloud todas las imágenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas de forma universal accediendo a ellas ejecutando los siguientes pull:
+```
+docker pull gcr.io/imagenesdocker-368517/kafka:latest
+docker pull gcr.io/imagenesdocker-368517/kafka2:latest
+docker pull gcr.io/imagenesdocker-368517/mongo:latest
+docker pull gcr.io/imagenesdocker-368517/spark:latest
+docker pull gcr.io/imagenesdocker-368517/sparkdistribuido:latest
+docker pull gcr.io/imagenesdocker-368517/webflask:latest
+docker pull gcr.io/imagenesdocker-368517/zookeeper:latest
 
-Para complementar la solución desplegada en cloud se han publicado en Google Cloud todas las imágenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas.
-El comando para publicar imagenes a partir de Dockerfiles en la nube de Google es el siguiente.
+```
+
+El comando que se ejecutará en la Shell de Google Cloud para publicar imagenes a partir de Dockerfiles es el siguiente.
+
 ```
 gcloud builds submit --tag gcr.io/<proyect_id>/<tag_name>
 ```
+Con esta solución el unico fichero que seria necesario seria el docker-compose.yml 
 
 Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
+
+# Pasos para montar el escenario
+
+Para poder arrancar desde un entorno sin imagenes de maquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero de deberá ejecutar el docker prune en el sistema.
+
+```
+sudo docker system prune -a
+```
+Seguidamente se descargar el proyecto principal desde el repositorio https://github.com/jgonzori3/trabajoBDFI.git ejecutando:
+```
+git clone https://github.com/jgonzori3/trabajoBDFI.git
+```
+Para poder desplegar todo el escenario desde el fichero docker-compose-yml nos ubicaremos en la direccion /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles:
+```
+cd /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles
+```
+en este diectorio se levanta el escenario del docker-compose.yml:
+```
+sudo docker-compose up
+```
+Este comando puede tardar unos minutos en importar y arrancar las imágenes desde nuestro proyecto en Google Cloud donde están publicadas.
+Una vez se han arrancado todas las imagenes podremos contar con las siguientes interfaces web:
+1. Interfaz Web del Flight Prediction
+
+![Interfaz web Flight Prediction](images/Interfaz-webflask-flightPrediction.png)
+
+2. Interfaz Web de Spark Master
+
+![Interfaz web Flight Prediction](images/Interfaz.web-SparkMaster.png)
+
+
+
 
 Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
 
