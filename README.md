@@ -8,15 +8,9 @@ En esta practica se resuelve el problema de desplegar el escenario con Docker Co
 
 ## Descargar el proyecto principal 
 Para poder arrancar con el despliegue de los componentes se ha estructurado un proyecto en un repositorio de github para poderse descargar en local.
-para ello primero se crea un directorio en el escritorio al que llamaremos PruebasDocker ------
-
+El comando para importar el repositorio será el siguiente:
 ```
-mkdir PruebasDocker
-cd PruebasDocker
-```
-Una vez dentro de este directrio importaremos el proyecto desde el repositorio.
-```
-git clone https://github.com/jgonzori3/Trabajo-BDFI.git
+git clone https://github.com/jgonzori3/trabajo-BDFI.git
 ```
 
 Debemos tener en cuenta que para este proyecto se necesita al menos trabajar en una maquina que tenga ubuntu 20 por temas de compatibilidad entre versiones.
@@ -47,7 +41,7 @@ Se trabajará con las siguientes versiones de software:
 
 6. El job de Spark se ejecuta usando el spark-submit con el fichero .jar que haciendo uso de las clases de Scala podrá generar un Stream al suscribirse al topic previamente creado por kafka pudiendo así subscribirse y "consumir" los datos, y además se conectará a la base de datos de mongo para incluir las predicciones.
 
-7. Finalmente se podran mostrar las diferentes prediciones que se van generando gracias al Polling continuo que hace Flask a mongo utilizando el canal generado por kafka que se ha mencionado anteriormente. Será a traves de la interfaz web de Flask a traves de la cual se podran mandar los datos para hacer las predicciones y será por donde se podrán observar los resultados.
+7. Finalmente se podrán mostrar las diferentes prediciones que se van generando gracias al Polling continuo que hace Flask a mongo utilizando el canal generado por kafka que se ha mencionado anteriormente. Será a traves de la interfaz web de Flask a traves de la cual se podran mandar los datos para hacer las predicciones y será por donde se podrán observar los resultados.
 
 # Hitos alcanzados
 
@@ -58,20 +52,23 @@ Se trabajará con las siguientes versiones de software:
 5. Desplegar el escenario completo en Google Cloud (1 punto).
 6. Entrenar el modelo con Apache Airflow (not yet).
 
-Adicionalmente se ha trabajado en una maquina virtual creada en el cloud de google y habremos estado trabajando en ella a traves de su interfaz grafica. Para conectarnos a ella en remoto hemos utilizado la aplicacion NoMachine que nos permite cómodamente conectarnos a la maquina. 
-Esto ha sido posible porque se ha configurado la maquina virtual para que el Firewall permita trafico http y https, y adicionalmente se ha creado una regla en el firewall que hemos llamado nomachine para poder conectarnos con un rango de IPs 0.0.0.0/0, para garantizar que podemos conectarnos desde el exterior, configurando el puerto tcp de acceso =4000.
+Adicionalmente se ha trabajado en una máquina virtual creada en el cloud de google y habremos estado trabajando en ella a traves de su interfaz gráfica. Para conectarnos a ella en remoto hemos utilizado la aplicacion NoMachine que nos permite cómodamente conectarnos. 
+Esto ha sido posible porque se ha configurado la maquina virtual para que el Firewall permita trafico http y https, y adicionalmente se ha creado una regla en el firewall que hemos llamado nomachine con un rango de IPs 0.0.0.0/0, para garantizar que podemos conectarnos desde el exterior, configurando el puerto tcp de acceso =4000.
 
-Para complementar la solucion desplegada en cloud se han publicado en Google Cloud todas las imagenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas.
+Para complementar la solución desplegada en cloud se han publicado en Google Cloud todas las imágenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas.
 El comando para publicar imagenes a partir de Dockerfiles en la nube de Google es el siguiente.
 ```
 gcloud builds submit --tag gcr.io/<proyect_id>/<tag_name>
 ```
 
-Para la automaticacion de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
+Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
 
 Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
+
 ![Airflow Architecture](images/Airflow´s-General-Architecture.png)
-Se puede observar una base de datos de metadatos que incluye toda la informacion de los workflows, de sus estados y de sus dependencias. Este primer modulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
+
+
+Se puede observar una base de datos de metadatos que incluye toda la información de los workflows, de sus estados y de sus dependencias. Este primer módulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
 
 En paralelo se encuentra el servidor web que hace uso tanto de la informacion de la base de datos como de los logs generados por los workers para presentar esta informacion en su interfaz web.
 
