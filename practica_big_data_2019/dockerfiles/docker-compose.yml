@@ -61,20 +61,6 @@ services:
       - mongo
       - kafka2
 
-  airflow:
-    container_name: airflow
-    image: gcr.io/imagenesdocker-368517/airflow
-    #build: airflow/.
-    ports: 
-    - "8084:8084"
-    environment: 
-      - PROJECT_HOME=/home/user1/trabajoBDFI/practica_big_data_2019
-      - AIRFLOW_HOME=/root/airflow
-    network_mode: host
-    depends_on:
-    # - sparkdistribuido
-    - kafka2
-
   webflask:
     container_name: webflask
     image: gcr.io/imagenesdocker-368517/webflask
