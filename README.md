@@ -6,12 +6,7 @@ En esta practica se resuelve el problema de desplegar el escenario con Docker Co
 
 [ <img src="images/video_course_cover.png"> ](http://datasyndrome.com/video)
 
-## Descargar el proyecto principal 
-Para poder arrancar con el despliegue de los componentes se ha estructurado un proyecto en un repositorio de github para poderse descargar en local.
-El comando para importar el repositorio será el siguiente:
-```
-git clone https://github.com/jgonzori3/trabajo-BDFI.git
-```
+
 
 Debemos tener en cuenta que para este proyecto se necesita al menos trabajar en una maquina que tenga ubuntu 20.04 por temas de compatibilidad entre versiones.
 Se trabajará con las siguientes versiones de software: 
@@ -75,6 +70,38 @@ gcloud builds submit --tag gcr.io/<proyect_id>/<tag_name>
 Con esta solución el unico fichero que seria necesario seria el docker-compose.yml 
 
 Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
+
+# Pasos para montar el escenario
+
+Para poder arrancar desde un entorno sin imagenes de maquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero de deberá ejecutar el docker prune en el sistema.
+
+```
+sudo docker system prune -a
+```
+Seguidamente se descargar el proyecto principal desde el repositorio https://github.com/jgonzori3/trabajoBDFI.git ejecutando:
+```
+git clone https://github.com/jgonzori3/trabajoBDFI.git
+```
+Para poder desplegar todo el escenario desde el fichero docker-compose-yml nos ubicaremos en la direccion /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles:
+```
+cd /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles
+```
+en este diectorio se levanta el escenario del docker-compose.yml:
+```
+sudo docker-compose up
+```
+Este comando puede tardar unos minutos en importar y arrancar las imágenes desde nuestro proyecto en Google Cloud donde están publicadas.
+Una vez se han arrancado todas las imagenes podremos contar con las siguientes interfaces web:
+1. Interfaz Web del Flight Prediction
+
+![Interfaz web Flight Prediction](images/Interfaz-webflask-flightPrediction.png)
+
+2. Interfaz Web de Spark Master
+
+![Interfaz web Flight Prediction](images/Interfaz.web-SparkMaster.png)
+
+
+
 
 Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
 
