@@ -132,7 +132,6 @@ import iso8601
 PROJECT_HOME = os.getenv("PROJECT_HOME")
 
 # Con los siguientes campos se puede determinar las propiedades principales
-# de los DAG pudiendose determinar la periodicidad, si queremos que esten activos directamente
 # para este ejemplo de setup.py se introducen dos caranteristicas importante 
 # 'retries' determina el numero de intentos antes de morirse el DAG
 # 'retry_delay' determina el tiempo de espera entre reintentos para los casos en los que falla
@@ -159,7 +158,10 @@ training_dag = DAG(
   schedule_interval=None
 )
 
+
 # We use the same two commands for all our PySpark tasks
+#Se puede observar como se usa la misma estrctura de comandos en todas las tareas diferenciandose
+#exclusivamente en su identificados
 pyspark_bash_command = """
 spark-submit --master {{ params.master }} \
   {{ params.base_path }}/{{ params.filename }} \
@@ -173,6 +175,11 @@ spark-submit --master {{ params.master }} \
 
 
 # Gather the training data for our classifier
+# Es en las siguientes lineas donde se definen las operaciones Bash con todos los 
+# campos rellenados hasta ahora 
+# se determina la direccion en la que es escucha al master de spark
+# la direccion del ficher python donde se encuentra toda la logica del DAG
+# la direccion que utiliza internamente para determinar direcciones absolutas en el sistema de ficheros
 """
 extract_features_operator = BashOperator(
   task_id = "pyspark_extract_features",
@@ -200,6 +207,8 @@ train_classifier_model_operator = BashOperator(
 )
 
 ```
+
+Se adjuntan a continuacionuna tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se repite:
 
 | None         | Don’t schedule, use for exclusively “externally triggered” DAGs |
 | --- | --- |
