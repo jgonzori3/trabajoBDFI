@@ -71,7 +71,7 @@ Con esta solución el unico fichero que seria necesario seria el docker-compose.
 
 Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
 
-# Pasos para montar el escenario
+## Pasos para montar el escenario
 
 Para poder arrancar desde un entorno sin imagenes de maquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero de deberá ejecutar el docker prune en el sistema.
 
@@ -92,14 +92,123 @@ sudo docker-compose up
 ```
 Este comando puede tardar unos minutos en importar y arrancar las imágenes desde nuestro proyecto en Google Cloud donde están publicadas.
 Una vez se han arrancado todas las imagenes podremos contar con las siguientes interfaces web:
-1. Interfaz Web del Flight Prediction
+1. Interfaz Web del Flight Prediction:
 
 ![Interfaz web Flight Prediction](images/Interfaz-webflask-flightPrediction.png)
 
-2. Interfaz Web de Spark Master
+2. Interfaz Web de Spark Master como Cluster Standalone:
 
-![Interfaz web Flight Prediction](images/Interfaz.web-SparkMaster.png)
+![Interfaz web Spark Master](images/Interfaz.web-SparkMaster.png)
 
+
+# Despliegue en el Container Registry de Google Cloud
+
+Como se mencionó en el punto 6 de hitos alcanzados, la solucion propuesta permite su despliegue desde la propia shell de Google Cloud. Lo unico que habrá que hacer es crear un fichero docker-compose.yml dentro de nuestro proyecto en Google, copiar el contenido del docker-compose.yml mencionado anteriormente y ejecutar:
+```
+sudo docker-compose up
+```
+De esta manera al ejecutarse Google Cloud genera una serie se asociaciones entre las direcciones y puertos que se generan el el docker compose con direcciones URL accesibles desde cualquier navegador del mundo. Estas direcciones presentan una estructura similar a la siguiente: https://5000-cs-1c2dda05-d2db-4a61-aa5d-8c7380c9cf79.cs-europe-west1-onse.cloudshell.dev/flights/delays/predict_kafka 
+
+Se muestra acontinuacion una captura del navegador con la anterior direccion mostrando cómo está corriendo la aplicación:
+
+![Interfaz web Flight Prediction](images/gcloud-web-predict.png)
+
+
+# Airflow
+
+Apache Airflow es una herramienta de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios).Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
+En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de tareas o de trabajos a ejecutar conectados mediante relaciones y dependencias. Son la representación de los workflows.
+Cada una de las tareas del DAG representada como un nodo, se describe con un operador y generalmente es atómica.
+
+```ruby
+import sys, os, re
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+from datetime import datetime, timedelta
+import iso8601
+
+PROJECT_HOME = os.getenv("PROJECT_HOME")
+
+# Con los siguientes campos se puede determinar las propiedades principales
+# de los DAG pudiendose determinar la periodicidad, si queremos que esten activos directamente
+# para este ejemplo de setup.py se introducen dos caranteristicas importante 
+# 'retries' determina el numero de intentos antes de morirse el DAG
+# 'retry_delay' determina el tiempo de espera entre reintentos para los casos en los que falla
+
+default_args = {
+  'owner': 'airflow',
+  'depends_on_past': False,
+  'start_date': iso8601.parse_date("2016-12-01"),
+  'retries': 3,
+  'retry_delay': timedelta(minutes=5),
+}
+
+# En esta secciones se continua configurando el DAG, se le asocia un nombre, 
+# los argumentos por defecto determinados anteriormente, tambien se determina
+#schedule_interval=none  que nos indica que se se va a ejecutar mas que cuando 
+# se hace forma manual. 
+
+@weekly	Run once a week at midnight on Sunday morning	0 0 * * 0
+@monthly	Run once a month at midnight of the first day of the month	0 0 1 * *
+@yearly	Run once a year at midnight of January 1	0 0 1 1 *
+training_dag = DAG(
+  'agile_data_science_batch_prediction_model_training',
+  default_args=default_args,
+  schedule_interval=None
+)
+
+# We use the same two commands for all our PySpark tasks
+pyspark_bash_command = """
+spark-submit --master {{ params.master }} \
+  {{ params.base_path }}/{{ params.filename }} \
+  {{ params.base_path }}
+"""
+pyspark_date_bash_command = """
+spark-submit --master {{ params.master }} \
+  {{ params.base_path }}/{{ params.filename }} \
+  {{ ts }} {{ params.base_path }}
+"""
+
+
+# Gather the training data for our classifier
+"""
+extract_features_operator = BashOperator(
+  task_id = "pyspark_extract_features",
+  bash_command = pyspark_bash_command,
+  params = {
+    "master": "local[8]",
+    "filename": "resources/extract_features.py",
+    "base_path": "{}/".format(PROJECT_HOME)
+  },
+  dag=training_dag
+)
+
+"""
+
+# Train and persist the classifier model
+train_classifier_model_operator = BashOperator(
+  task_id = "pyspark_train_classifier_model",
+  bash_command = pyspark_bash_command,
+  params = {
+    "master": "local[8]",
+    "filename": "resources/train_spark_mllib_model.py",
+    "base_path": "{}/".format(PROJECT_HOME)
+  },
+  dag=training_dag
+)
+
+```
+
+| None         | Don’t schedule, use for exclusively “externally triggered” DAGs |
+| --- | --- |
+| @once        |   	Schedule once and only once                                  | 
+| @hourly      |Run once an hour at the beginning of the hour  | 
+| @daily	      |Run once a day at midnight	      | 
+| @weekly	     |Run once a week at midnight on Sunday morning      | 
+| @monthly	    |Run once a month at midnight of the first day of the month      | 
+| @yearly      |Run once a year at midnight of January      | 
 
 
 
@@ -119,55 +228,6 @@ En paralelo se encuentra el servidor web que hace uso tanto de la informacion de
 - Jesús González
 
 
-# Información Adicional Del Proyecto
-
-
-##  La pirámide del valor de los datos
-
-Originalmente por Pete Warden, la pirámide de valores de datos es cómo se organiza y estructura el libro. Lo subimos a medida que avanzamos cada capítulo.
-![Data Value Pyramid](images/climbing_the_pyramid_chapter_intro.png)
-
-## Arquitectura del sistema
-
-Los siguientes diagramas se extraen del libro y expresan los conceptos básicos de la arquitectura del sistema. Las arquitecturas de front-end y back-end funcionan juntas para crear un sistema predictivo completo.
-
-## Arquitectura Front End
-
-Este diagrama muestra cómo funciona la arquitectura de front-end en nuestra aplicación de predicción de retrasos de vuelos. El usuario completa un formulario con información básica en un formulario en una página web, que se envía al servidor. El servidor completa algunos campos necesarios derivados de los del formulario como "día del año" y emite un mensaje de Kafka que contiene una solicitud de predicción. Spark Streaming está escuchando en una cola de Kafka para estas solicitudes y hace la predicción, almacenando el resultado en MongoDB. Mientras tanto, el cliente recibió un UUID en la respuesta del formulario y ha estado sondeando otro punto final cada segundo. Una vez que los datos están disponibles en Mongo, la próxima solicitud del cliente los recoge. ¡Finalmente, el cliente muestra el resultado de la predicción al usuario!
-
-Esta configuración es extremadamente divertida de configurar, operar y observar. ¡Consulte los capítulos 7 y 8 para obtener más información!
-
-![Front End Architecture](images/front_end_realtime_architecture.png)
-
-## Arquitectura de back-end
-
-El diagrama de la arquitectura de back-end muestra cómo entrenamos un modelo clasificador utilizando datos históricos (todos los vuelos desde 2015) en el disco (HDFS o Amazon S3, etc.) para predecir retrasos en los vuelos por lotes en Spark. Guardamos el modelo en el disco cuando esté listo. A continuación, lanzamos Zookeeper y una cola de Kafka. Usamos Spark Streaming para cargar el modelo clasificador y luego escuchamos las solicitudes de predicción en una cola de Kafka. Cuando llega una solicitud de predicción, Spark Streaming realiza la predicción y almacena el resultado en MongoDB, donde la aplicación web puede recogerlo.
-
-Esta arquitectura es extremadamente poderosa y es un gran beneficio que podamos usar el mismo código por lotes y en tiempo real con PySpark Streaming.
-
-![Backend Architecture](images/back_end_realtime_architecture.png)
-
-# capturas de pantalla
-
-A continuación se muestran algunos ejemplos de partes de la aplicación que construimos en este libro y en este repositorio. ¡Mira el libro para más!
-
-## Página de la entidad de la aerolínea
-
-Cada aerolínea tiene su propia página de entidad, completa con un resumen de su flota y una descripción extraída de Wikipedia.
-
-![Airline Page](images/airline_page_enriched_wikipedia.png)
-
-## Página de la flota de aviones
-
-Demostramos resumir una entidad con una página de flota de aviones que describe toda la flota.
-
-![Airplane Fleet Page](images/airplanes_page_chart_v1_v2.png)
-
-## Interfaz de usuario de predicción de retrasos de vuelos
-
-Creamos un sistema predictivo completo en tiempo real con un front-end web para enviar solicitudes de predicción.
-
-![Predicting Flight Delays UI](images/predicting_flight_kafka_waiting.png)
 
 
 
