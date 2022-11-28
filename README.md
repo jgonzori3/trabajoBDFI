@@ -47,7 +47,7 @@ Se trabajará con las siguientes versiones de software:
 3. Dockerizar cada uno de los servicios que componen la arquitectura completa. (1 punto)
 4. Desplegar el escenario completo usando Docker-Compose. (1 punto)
 5. Desplegar el escenario completo en Google Cloud en una maquina virtual accediendo a esta a través del gestor de interfaces gráficas de Nomachine (1 punto).
-6. Habilitar el despliegue del escenario completo en el Container Registry de Google Cloud (https://console.cloud.google.com/gcr/images/imagenesdocker-368517?project=imagenesdocker-368517). 
+6. Habilitar el despliegue del escenario completo en el Container Registry de Google Cloud (https://console.cloud.google.com/gcr/images/imagenesdocker-368517/). 
 7. Se propone una solución que utiliza Airflow ejecutandose en la maquina virtual de manera local.
 
 Para complementar la solución desplegada en cloud (punto 6 de hitos alcanzados) se han publicado en Google Cloud todas las imágenes que usamos para hacer docker compose garantizando así que siempre podremos tener acceso a ellas de forma universal accediendo a ellas ejecutando los siguientes pull:
