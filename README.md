@@ -123,7 +123,15 @@ En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de ta
 Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
 
 
-![Airflow Architecture](images/Airflow´s-General-Architecture.png)
+![Airflow Architecture](images/AirflowArch.png)
+
+Donde se pueden destacar los siguientes componentes:
+
+* Scheduler:
+* Executor:
+* Webserver:
+* Directorio DAG (archivos python):
+* Metadata Database:
 
 
 Se puede observar una base de datos de metadatos que incluye toda la información de los workflows, de sus estados y de sus dependencias. Este primer módulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
