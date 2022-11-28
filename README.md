@@ -114,12 +114,25 @@ Se muestra a continuación una captura del navegador con la anterior dirección 
 ## 5. Apache Airflow (opcional)
 
 Apache Airflow es una herramienta de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios). Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
-En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de tareas o de trabajos a ejecutar conectados mediante relaciones y dependencias. Son la representación de los workflows.
-Cada una de las tareas del DAG representada como un nodo, se describe con un operador y generalmente es atómica.
 
-Para el despliegue de Apache Airflow en el proyecto será necesario seguir una serie de pasos para desplegar de manera local la herramienta.
+En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de tareas o de trabajos a ejecutar conectados mediante relaciones y dependencias. Son la representación de los flujos de trabajo (workflows). Generalmente, cada DAG está formado por un conjunto de tareas (tasks). Estas tareas son la unidad básica de ejecución de Airflow donde suelen ser atómicas y se definen utilizando el lenguaje Python.
 
-### 5.1 Ejecución de entorno virtualizado (opcional)
+
+### 5.1 Arquitectura de Apache Airflow
+
+Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
+
+
+![Airflow Architecture](images/Airflow´s-General-Architecture.png)
+
+
+Se puede observar una base de datos de metadatos que incluye toda la información de los workflows, de sus estados y de sus dependencias. Este primer módulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
+
+En paralelo se encuentra el servidor web que hace uso tanto de la informacion de la base de datos como de los logs generados por los workers para presentar esta informacion en su interfaz web.
+
+
+
+### 5.2 Ejecución de entorno virtualizado (opcional)
 
 En primer lugar, es muy recomendable desplegar un entorno virtualizado de python para trabajar de manera aislada con las dependencias de Airflow sin alterar de manera global las dependecias de python de la maquina virtual. Una vez, el escenario vitualizado esté creado, accederemos al mismo utilizando los comandos que se muestran a continuacion. En el caso de este proyecto, el entorno virtualizado se llama "airflow_env":
 
@@ -128,7 +141,9 @@ cd environments
 source airflow_env/bin/activate
 ```
 
-### 5.2 Ejecución de dependencias de Airflow 
+### 5.3 Ejecución de dependencias de Airflow 
+
+Para el despliegue de Apache Airflow en el proyecto será necesario seguir una serie de pasos para desplegar de manera local la herramienta.
 
 La primera vez que se ejecute el entorno virtualizado, será necesario instalar las dependencias necesarias para Airflow. Esto solo se hará una única vez:
 
@@ -164,7 +179,7 @@ airflow users create \
     --password password 
 ```
 
-### 5.3 Inicialización de los servicios
+### 5.4 Inicialización de los servicios
 
 En primer lugar, establecemos la variable de entorno PROJECT_HOME en la ruta donde esté situado el repositorio para que el ficher setup.py pueda leer la variable de entorno:
 
@@ -185,7 +200,6 @@ Como resultado, se podrá observar un entorno web que contendrá una serie de ej
 ![Interfaz web Airflow](images/airflowImagenWeb.png)
 
 
-### 5.4 Explicación arquitectura Apache Airflow
 ### 5.5 Análisis setup.py
 
 
@@ -297,14 +311,7 @@ Se adjuntan a continuacionuna tabla de los posibles valores que se puede asociar
 
 
 
-Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustrativa.
 
-![Airflow Architecture](images/Airflow´s-General-Architecture.png)
-
-
-Se puede observar una base de datos de metadatos que incluye toda la información de los workflows, de sus estados y de sus dependencias. Este primer módulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
-
-En paralelo se encuentra el servidor web que hace uso tanto de la informacion de la base de datos como de los logs generados por los workers para presentar esta informacion en su interfaz web.
 
 
 
