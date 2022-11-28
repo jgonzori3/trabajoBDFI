@@ -113,7 +113,7 @@ Se muestra a continuación una captura del navegador con la anterior dirección 
 
 ## 5. Apache Airflow (opcional)
 
-Apache Airflow es una herramienta de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios). Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
+Apache Airflow es una herramienta open source de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios). Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
 
 En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de tareas o de trabajos a ejecutar conectados mediante relaciones y dependencias. Son la representación de los flujos de trabajo (workflows). Generalmente, cada DAG está formado por un conjunto de tareas (tasks). Estas tareas son la unidad básica de ejecución de Airflow donde suelen ser atómicas y se definen utilizando el lenguaje Python.
 
