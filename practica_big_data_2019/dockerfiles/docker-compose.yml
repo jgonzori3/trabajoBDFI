@@ -71,10 +71,7 @@ services:
     environment: 
       - PROJECT_HOME=/app/practica_big_data_2019
     depends_on:
-      - kafka2
-      #- spark
-      #- sparkdistribuido
-     # - airflow
+      - sparkdistribuido
 
 
 
