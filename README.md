@@ -42,12 +42,12 @@ Se trabajará con las siguientes versiones de software:
 
 # Hitos alcanzados
 
-1. Lograr el funcionamiento de la práctica sin realizar modificaciones ejecutando el job de prediccion con intellij (4 puntos).
-2. Ejecución del job de predicción con Spark Submit en vez de IntelliJ tanto de forma local como de forma Standalone con 2 workers(1 punto).
+1. Lograr el funcionamiento de la práctica sin realizar modificaciones ejecutando el Job de prediccion con Intellij. (4 puntos).
+2. Ejecución del Job de predicción con Spark Submit en vez de IntelliJ tanto de forma local como de forma Standalone con 2 workers. (1 punto).
 3. Dockerizar cada uno de los servicios que componen la arquitectura completa. (1 punto)
-4. Desplegar el escenario completo usando docker-compose. (1 punto)
-5. Desplegar el escenario completo en Google Cloud en una Maquina virtual accediendo a esta a traves del gestor de Interfaces grafias de Nomachine(1 punto).
-6. Habilitar el despliegue del escenario completo en el Container Registry de Google cloud. 
+4. Desplegar el escenario completo usando Docker-Compose. (1 punto)
+5. Desplegar el escenario completo en Google Cloud en una maquina virtual accediendo a esta a través del gestor de interfaces gráficas de Nomachine (1 punto).
+6. Habilitar el despliegue del escenario completo en el Container Registry de Google Cloud. 
 7. Se propone una solucion que utiliza Airflow como gestor de tareas en la siguiente https://github.com/jgonzori3/trabajoBDFI_v2.git
 
 Para complementar la solución desplegada en cloud (punto 6 de hitos alcanzados) se han publicado en Google Cloud todas las imágenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas de forma universal accediendo a ellas ejecutando los siguientes pull:
