@@ -104,7 +104,7 @@ Como se mencionó en el punto 6 de hitos alcanzados, la solución propuesta perm
 ```
 sudo docker-compose up
 ```
-De esta manera al ejecutarse Google Cloud genera una serie se asociaciones entre las direcciones y puertos que se generan el el docker compose con direcciones URL accesibles desde cualquier navegador del mundo. Estas direcciones presentan una estructura similar a la siguiente: https://5000-cs-1c2dda05-d2db-4a61-aa5d-8c7380c9cf79.cs-europe-west1-onse.cloudshell.dev/flights/delays/predict_kafka 
+De esta manera al ejecutarse Google Cloud genera una serie se asociaciones entre las direcciones y puertos que se generan el el docker compose con direcciones URL accesibles desde cualquier navegador del mundo dando los permisos correspondientes. Estas direcciones presentan una estructura similar a la siguiente: https://5000-cs-1c2dda05-d2db-4a61-aa5d-8c7380c9cf79.cs-europe-west1-onse.cloudshell.dev/flights/delays/predict_kafka 
 
 Se muestra a continuación una captura del navegador con la anterior dirección mostrando cómo está corriendo la aplicación:
 
