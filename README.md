@@ -1,4 +1,4 @@
-# Trabajo-BDFI  Predicciones de retrasos de vuelos
+# ✈️ Trabajo-BDFI  Predicciones de retrasos de vuelos ✈️
 Esta práctica que arranca del repositorio publicado https://github.com/ging/practica_big_data_2019 y este deriva de otro anterior https://github.com/rjurney/Agile_Data_Code_2 . 
 En esta practica se resuelve el problema de desplegar el escenario con Docker Compose utilizando imagenes publicadas en Google Cloud.
 
@@ -22,7 +22,7 @@ Se trabajará con las siguientes versiones de software:
  - [Kafka](https://kafka.apache.org/quickstart) (version kafka_2.12-3.0.0)
  - [Airflow](https://airflow.apache.org/docs/apache-airflow/2.0.1/installation.html) (version 2.1.4)
 
-# Procesos que se realizan
+# Procesos que se realizan 📋
 
 1. Descargar los datos de vuelos pasados.
 
@@ -40,14 +40,14 @@ Se trabajará con las siguientes versiones de software:
 
 8. En caso afirmativo, se muestra la predicción en la interfaz
 
-# Hitos alcanzados
+# Hitos alcanzados ✅
 
 1. Lograr el funcionamiento de la práctica sin realizar modificaciones ejecutando el Job de prediccion con Intellij. (4 puntos).
 2. Ejecución del Job de predicción con Spark Submit en vez de IntelliJ tanto de forma local como de forma Standalone con 2 workers. (1 punto).
 3. Dockerizar cada uno de los servicios que componen la arquitectura completa. (1 punto)
 4. Desplegar el escenario completo usando Docker-Compose. (1 punto)
 5. Desplegar el escenario completo en Google Cloud en una maquina virtual accediendo a esta a través del gestor de interfaces gráficas de Nomachine (1 punto).
-6. Habilitar el despliegue del escenario completo en el Container Registry de Google Cloud. 
+6. Habilitar el despliegue del escenario completo en el Container Registry de Google Cloud (https://console.cloud.google.com/gcr/images/imagenesdocker-368517?project=imagenesdocker-368517). 
 7. Se propone una solucion que utiliza Airflow como gestor de tareas en la siguiente https://github.com/jgonzori3/trabajoBDFI_v2.git
 
 Para complementar la solución desplegada en cloud (punto 6 de hitos alcanzados) se han publicado en Google Cloud todas las imágenes que usamos para hacer el docker compose garantizando así que siempre podremos tener acceso a ellas de forma universal accediendo a ellas ejecutando los siguientes pull:
@@ -66,49 +66,49 @@ El comando que se ejecutará en la Shell de Google Cloud para publicar imagenes 
 ```
 gcloud builds submit --tag gcr.io/<proyect_id>/<tag_name>
 ```
-Con esta solución el unico fichero que seria necesario seria el docker-compose.yml 
+Con esta solución el único fichero necesario será el docker-compose.yml 
 
 Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
 
-## Pasos para montar el escenario
+## Pasos para montar el escenario 🚀
 
-Para poder arrancar desde un entorno sin imagenes de maquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero de deberá ejecutar el docker prune en el sistema.
+Para poder arrancar desde un entorno sin imagenes de máquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero se deberá ejecutar el docker prune en el sistema.
 
 ```
 sudo docker system prune -a
 ```
-Seguidamente se descargar el proyecto principal desde el repositorio https://github.com/jgonzori3/trabajoBDFI.git ejecutando:
+Seguidamente se descargará el proyecto principal desde el repositorio https://github.com/jgonzori3/trabajoBDFI.git ejecutando:
 ```
 git clone https://github.com/jgonzori3/trabajoBDFI.git
 ```
-Para poder desplegar todo el escenario desde el fichero docker-compose-yml nos ubicaremos en la direccion /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles:
+Una vez dentro del proyecto, para poder desplegar todo el escenario desde el fichero docker-compose-yml, nos ubicaremos en el directorio dockerfiles del proyecto con el siguiente comando:
 ```
-cd /home/user1/trabajoBDFI/tree/master/practica_big_data_2019/dockerfiles
+cd practica_big_data_2019/dockerfiles
 ```
-en este diectorio se levanta el escenario del docker-compose.yml:
+Para desplegar el escenario utilizando Docker se hará uso de docker-compose.yml con el siguiente comando:
 ```
 sudo docker-compose up
 ```
 Este comando puede tardar unos minutos en importar y arrancar las imágenes desde nuestro proyecto en Google Cloud donde están publicadas.
 Una vez se han arrancado todas las imagenes podremos contar con las siguientes interfaces web:
-1. Interfaz Web del Flight Prediction:
+1. Interfaz Web del Flight Prediction (http://localhost:5000/flights/delays/predict_kafka):
 
 ![Interfaz web Flight Prediction](images/Interfaz-webflask-flightPrediction.png)
 
-2. Interfaz Web de Spark Master como Cluster Standalone:
+2. Interfaz Web de Spark Master como Cluster Standalone (http://localhost:8080):
 
 ![Interfaz web Spark Master](images/Interfaz.web-SparkMaster.png)
 
 
-# Despliegue en el Container Registry de Google Cloud
+# Despliegue en el Container Registry de Google Cloud (opcional) ☁️
 
-Como se mencionó en el punto 6 de hitos alcanzados, la solucion propuesta permite su despliegue desde la propia shell de Google Cloud. Lo unico que habrá que hacer es crear un fichero docker-compose.yml dentro de nuestro proyecto en Google, copiar el contenido del docker-compose.yml mencionado anteriormente y ejecutar:
+Como se mencionó en el punto 6 de hitos alcanzados, la solución propuesta permite su despliegue desde la propia shell de Google Cloud. Lo único que habrá que hacer es crear un fichero docker-compose.yml dentro de nuestro proyecto en Google, copiar el contenido del docker-compose.yml mencionado anteriormente y ejecutar:
 ```
 sudo docker-compose up
 ```
 De esta manera al ejecutarse Google Cloud genera una serie se asociaciones entre las direcciones y puertos que se generan el el docker compose con direcciones URL accesibles desde cualquier navegador del mundo. Estas direcciones presentan una estructura similar a la siguiente: https://5000-cs-1c2dda05-d2db-4a61-aa5d-8c7380c9cf79.cs-europe-west1-onse.cloudshell.dev/flights/delays/predict_kafka 
 
-Se muestra acontinuacion una captura del navegador con la anterior direccion mostrando cómo está corriendo la aplicación:
+Se muestra a continuación una captura del navegador con la anterior dirección mostrando cómo está corriendo la aplicación:
 
 ![Interfaz web Flight Prediction](images/gcloud-web-predict.png)
 
@@ -231,9 +231,9 @@ En paralelo se encuentra el servidor web que hace uso tanto de la informacion de
 
 
 
-## Autores
-- Alejandro Moreno 
-- Jesús González
+## Autores ✒️
+- Alejandro Moreno - [amorenog9](https://github.com/amorenog9)
+- Jesús González -  [jgonzori3](https://github.com/jgonzori3)
 
 
 
