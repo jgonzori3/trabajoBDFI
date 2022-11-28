@@ -58,7 +58,6 @@ docker pull gcr.io/imagenesdocker-368517/mongo:latest
 docker pull gcr.io/imagenesdocker-368517/spark:latest
 docker pull gcr.io/imagenesdocker-368517/webflask:latest
 docker pull gcr.io/imagenesdocker-368517/zookeeper:latest
-
 ```
 
 El comando que se ejecutará en la Shell de Google Cloud para publicar imagenes a partir de Dockerfiles es el siguiente.
@@ -185,6 +184,9 @@ Como resultado, se podrá observar un entorno web que contendrá una serie de ej
 
 ![Interfaz web Airflow](images/airflowImagenWeb.png)
 
+
+### 5.4 Explicación arquitectura Apache Airflow
+### 5.5 Análisis setup.py
 
 
 
