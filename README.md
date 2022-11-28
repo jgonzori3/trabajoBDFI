@@ -56,7 +56,6 @@ docker pull gcr.io/imagenesdocker-368517/kafka:latest
 docker pull gcr.io/imagenesdocker-368517/kafka2:latest
 docker pull gcr.io/imagenesdocker-368517/mongo:latest
 docker pull gcr.io/imagenesdocker-368517/spark:latest
-docker pull gcr.io/imagenesdocker-368517/sparkdistribuido:latest
 docker pull gcr.io/imagenesdocker-368517/webflask:latest
 docker pull gcr.io/imagenesdocker-368517/zookeeper:latest
 
