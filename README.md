@@ -2,7 +2,7 @@
 Esta práctica que arranca del repositorio publicado https://github.com/ging/practica_big_data_2019 y este deriva de otro anterior https://github.com/rjurney/Agile_Data_Code_2 . 
 En esta practica se resuelve el problema de desplegar el escenario con Docker Compose utilizando imagenes publicadas en Google Cloud.
 
-##  Curso de análisis predictivo en tiempo real
+## 1. Curso de análisis predictivo en tiempo real y versiones utilizadas
 
 [ <img src="images/video_course_cover.png"> ](http://datasyndrome.com/video)
 
@@ -22,7 +22,7 @@ Se trabajará con las siguientes versiones de software:
  - [Kafka](https://kafka.apache.org/quickstart) (version kafka_2.12-3.0.0)
  - [Airflow](https://airflow.apache.org/docs/apache-airflow/2.0.1/installation.html) (version 2.1.4)
 
-# Procesos que se realizan 📋
+## 2. Procesos que se realizan 📋
 
 1. Descargar los datos de vuelos pasados.
 
@@ -40,7 +40,7 @@ Se trabajará con las siguientes versiones de software:
 
 8. En caso afirmativo, se muestra la predicción en la interfaz
 
-# Hitos alcanzados ✅
+## 3. Hitos alcanzados ✅
 
 1. Lograr el funcionamiento de la práctica sin realizar modificaciones ejecutando el Job de prediccion con Intellij. (4 puntos).
 2. Ejecución del Job de predicción con Spark Submit en vez de IntelliJ tanto de forma local como de forma Standalone con 2 workers. (1 punto).
@@ -68,9 +68,8 @@ gcloud builds submit --tag gcr.io/<proyect_id>/<tag_name>
 ```
 Con esta solución el único fichero necesario será el docker-compose.yml 
 
-Para la automaticación de tareas hemos utilizado Apache Airflow que nos permite operaciones como borrar de la base de datos todas las peticiones que se hayan realizado en el ultimo mes, o reentrenar el modelo una vez a la semana anadiendo nuevos datos.
 
-## Pasos para montar el escenario 🚀
+### 3.1 Pasos para montar el escenario 🚀
 
 Para poder arrancar desde un entorno sin imagenes de máquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero se deberá ejecutar el docker prune en el sistema.
 
@@ -100,7 +99,7 @@ Una vez se han arrancado todas las imagenes podremos contar con las siguientes i
 ![Interfaz web Spark Master](images/Interfaz.web-SparkMaster.png)
 
 
-# Despliegue en el Container Registry de Google Cloud (opcional) ☁️
+## 4. Despliegue en el Container Registry de Google Cloud (opcional) ☁️
 
 Como se mencionó en el punto 6 de hitos alcanzados, la solución propuesta permite su despliegue desde la propia shell de Google Cloud. Lo único que habrá que hacer es crear un fichero docker-compose.yml dentro de nuestro proyecto en Google, copiar el contenido del docker-compose.yml mencionado anteriormente y ejecutar:
 ```
@@ -113,11 +112,87 @@ Se muestra a continuación una captura del navegador con la anterior dirección 
 ![Interfaz web Flight Prediction](images/gcloud-web-predict.png)
 
 
-# Airflow
+## 5. Apache Airflow (opcional)
 
-Apache Airflow es una herramienta de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios).Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
+Apache Airflow es una herramienta de tipo workflow manager (gestionar, monitorizar y planificar flujos de trabajo, usada como orquestador de servicios). Airflow se usa para automatizar trabajos programáticamente dividiéndolos en subtareas. Los casos de uso más comunes son la automatización de ingestas de datos, acciones de mantenimiento periódicas y tareas de administración. También podemos usar Airflow para orquestar testing automático de componentes, backups y generación de métricas y reportes.
 En Airflow, se trabaja con DAGs (Directed Acyclic Graphs). Son colecciones de tareas o de trabajos a ejecutar conectados mediante relaciones y dependencias. Son la representación de los workflows.
 Cada una de las tareas del DAG representada como un nodo, se describe con un operador y generalmente es atómica.
+
+Para el despliegue de Apache Airflow en el proyecto será necesario seguir una serie de pasos para desplegar de manera local la herramienta.
+
+### 5.1 Ejecución de entorno virtualizado (opcional)
+
+En primer lugar, es muy recomendable desplegar un entorno virtualizado de python para trabajar de manera aislada con las dependencias de Airflow sin alterar de manera global las dependecias de python de la maquina virtual. Una vez, el escenario vitualizado esté creado, accederemos al mismo utilizando los comandos que se muestran a continuacion. En el caso de este proyecto, el entorno virtualizado se llama "airflow_env":
+
+```
+cd environments
+source airflow_env/bin/activate
+```
+
+### 5.2 Ejecución de dependencias de Airflow 
+
+La primera vez que se ejecute el entorno virtualizado, será necesario instalar las dependencias necesarias para Airflow. Esto solo se hará una única vez:
+
+Dentro del proyecto (practica_big_data_2019) accederemos al directorio airflow e instalaremos las dependencias:
+
+```
+cd resources/airflow
+pip install -r requirements.txt -c constraints.txt
+```
+
+Inicializamos la base de datos:
+
+```
+airflow db init
+```
+Creamos las carpetas "dags", "logs" y "plugins" dentro del directorio donde se ha creado airflow:
+
+```
+export AIRFLOW_HOME=~/airflow
+mkdir $AIRFLOW_HOME/dags
+mkdir $AIRFLOW_HOME/logs
+mkdir $AIRFLOW_HOME/plugins
+```
+
+Por ultimo, se creará un nuevo usuario con el siguiente comando:
+```
+airflow users create \
+    --username admin \
+    --firstname Jack \
+    --lastname  Sparrow\
+    --role Admin \
+    --email example@mail.org\
+    --password password 
+```
+
+### 5.3 Inicialización de los servicios
+
+En primer lugar, establecemos la variable de entorno PROJECT_HOME en la ruta donde esté situado el repositorio para que el ficher setup.py pueda leer la variable de entorno:
+
+```
+export PROJECT_HOME=/home/user1/trabajoBDFI/practica_big_data_2019
+```
+
+Una vez configurado airflow en la maquina virtual (tanto en el servicio virtualizado o si se prefiere de manera local en el python instalado en la máquina virtual), se podrá iniciar la herramienta con los siguientes comandos mostrados:
+
+```
+airflow webserver --port 8084
+airflow scheduler
+```
+
+Como resultado, se podrá observar un entorno web que contendrá una serie de ejemplos de DAG creados al inicializar la base de datos. Adicionalmente, todos los DAGs que el usuario genere podrá subirlos a la plataforma web incluyendo los ficheros (como por ejemplo setup.py) dentro del directorio $AIRFLOW_HOME/dags.
+
+
+![Interfaz web Airflow](images/airflowImagenWeb.png)
+
+
+
+
+
+
+
+
+
 
 ```ruby
 import sys, os, re
