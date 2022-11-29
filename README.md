@@ -169,7 +169,7 @@ mkdir $AIRFLOW_HOME/logs
 mkdir $AIRFLOW_HOME/plugins
 ```
 
-Por ultimo, se creará un nuevo usuario con el siguiente comando:
+Por último, se creará un nuevo usuario con el siguiente comando:
 ```
 airflow users create \
     --username admin \
@@ -230,7 +230,7 @@ default_args = {
 
 # En esta secciones se continua configurando el DAG, se le asocia un nombre, 
 # los argumentos por defecto determinados anteriormente, tambien se determina
-#schedule_interval=none  que nos indica que se se va a ejecutar mas que cuando 
+# schedule_interval=none  que nos indica que se se va a ejecutar mas que cuando 
 # se hace forma manual. 
 training_dag = DAG(
   'agile_data_science_batch_prediction_model_training',
@@ -240,7 +240,7 @@ training_dag = DAG(
 
 
 # We use the same two commands for all our PySpark tasks
-#Se puede observar como se usa la misma estrctura de comandos en todas las tareas diferenciandose
+#Se puede observar como se usa la misma estructura de comandos en todas las tareas diferenciandose
 #exclusivamente en su identificados
 pyspark_bash_command = """
 spark-submit --master {{ params.master }} \
@@ -258,8 +258,8 @@ spark-submit --master {{ params.master }} \
 # Es en las siguientes lineas donde se definen las operaciones Bash con todos los 
 # campos rellenados hasta ahora 
 # se determina la direccion en la que es escucha al master de spark
-# la direccion del fichero Python donde se encuentra toda la logica del DAG
-# la direccion que utiliza internamente para determinar direcciones absolutas en el sistema de ficheros
+# la dirección del fichero Python donde se encuentra toda la lógica del DAG
+# la dirección que utiliza internamente para determinar direcciones absolutas en el sistema de ficheros
 """
 extract_features_operator = BashOperator(
   task_id = "pyspark_extract_features",
@@ -288,7 +288,7 @@ train_classifier_model_operator = BashOperator(
 
 ```
 
-Se adjuntan a continuación una tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se repite:
+Se adjuntan a continuación una tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se desee repetir:
 
 | Scheduler         |Description |
 | --- | --- |
