@@ -288,7 +288,7 @@ train_classifier_model_operator = BashOperator(
 
 ```
 
-Se adjuntan a continuacionuna tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se repite:
+Se adjuntan a continuación una tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se repite:
 
 | Scheduler         |Description |
 | --- | --- |
