@@ -188,7 +188,7 @@ En primer lugar, establecemos la variable de entorno PROJECT_HOME en la ruta don
 export PROJECT_HOME=/home/user1/trabajoBDFI/practica_big_data_2019
 ```
 
-Una vez configurado airflow en la maquina virtual (tanto en el servicio virtualizado o si se prefiere de manera local en el Python instalado en la máquina virtual), se podrá iniciar la herramienta con los siguientes comandos mostrados:
+Una vez configurado airflow en la máquina virtual (tanto en el servicio virtualizado o si se prefiere de manera local en el Python instalado en la máquina virtual), se podrá iniciar la herramienta con los siguientes comandos mostrados:
 
 ```
 airflow webserver --port 8084
@@ -258,7 +258,7 @@ spark-submit --master {{ params.master }} \
 # Es en las siguientes lineas donde se definen las operaciones Bash con todos los 
 # campos rellenados hasta ahora 
 # se determina la direccion en la que es escucha al master de spark
-# la direccion del ficher Python donde se encuentra toda la logica del DAG
+# la direccion del fichero Python donde se encuentra toda la logica del DAG
 # la direccion que utiliza internamente para determinar direcciones absolutas en el sistema de ficheros
 """
 extract_features_operator = BashOperator(
