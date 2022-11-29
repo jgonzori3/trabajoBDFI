@@ -127,22 +127,15 @@ Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustr
 
 Donde se pueden destacar los siguientes componentes:
 
-* Scheduler:
-* Executor:
-* Webserver:
-* Directorio DAG (archivos python):
-* Metadata Database:
-
-
-Se puede observar una base de datos de metadatos que incluye toda la información de los workflows, de sus estados y de sus dependencias. Este primer módulo se conecta al scheduler, este modulo extrae de los metadatos la informacion relativas al orden de ejecucion de las tareas y su prioridad. Ligado estrechamente con este se encuentra el executor que se encarga de determinar el nodo que va a ejecutar cada tarea. Por último en la parte superior encontramos los workers que serán los que se encarguen de ejecutar la logica de las tareas.
-
-En paralelo se encuentra el servidor web que hace uso tanto de la informacion de la base de datos como de los logs generados por los workers para presentar esta informacion en su interfaz web.
-
-
+* Scheduler: Se encarga de activar los DAGs y de cargarlos en el ejecutor de tareas.
+* Executor: Maneja las tareas que están en ejecución mandandoselo generalmente a los workers.
+* Webserver: Interfaz web que permite al usuario inspeccionar, activar y depurar los DAGs (estado actual del DAG, ultima ejecución, consulta de logs, etc).
+* Directorio DAG: Ruta donde el usuario puede introducir los DAGs para que se muestren en la interfaz web y se ejecuten en la herramienta. Estos ficheros deberán estar descritos utilizando el lenguaje Python.
+* Metadata Database: utilizada por el Scheduler, el Executor y el servidor web para almacenar el estado.
 
 ### 5.2 Ejecución de entorno virtualizado (opcional)
 
-En primer lugar, es muy recomendable desplegar un entorno virtualizado de python para trabajar de manera aislada con las dependencias de Airflow sin alterar de manera global las dependecias de python de la maquina virtual. Una vez, el escenario vitualizado esté creado, accederemos al mismo utilizando los comandos que se muestran a continuacion. En el caso de este proyecto, el entorno virtualizado se llama "airflow_env":
+En primer lugar, es muy recomendable desplegar un entorno virtualizado de Python para trabajar de manera aislada con las dependencias de Airflow sin alterar de manera global las dependecias de Python de la maquina virtual. Una vez, el escenario vitualizado esté creado, accederemos al mismo utilizando los comandos que se muestran a continuacion. En el caso de este proyecto, el entorno virtualizado se llama "airflow_env":
 
 ```
 cd environments
@@ -195,7 +188,7 @@ En primer lugar, establecemos la variable de entorno PROJECT_HOME en la ruta don
 export PROJECT_HOME=/home/user1/trabajoBDFI/practica_big_data_2019
 ```
 
-Una vez configurado airflow en la maquina virtual (tanto en el servicio virtualizado o si se prefiere de manera local en el python instalado en la máquina virtual), se podrá iniciar la herramienta con los siguientes comandos mostrados:
+Una vez configurado airflow en la maquina virtual (tanto en el servicio virtualizado o si se prefiere de manera local en el Python instalado en la máquina virtual), se podrá iniciar la herramienta con los siguientes comandos mostrados:
 
 ```
 airflow webserver --port 8084
@@ -209,13 +202,6 @@ Como resultado, se podrá observar un entorno web que contendrá una serie de ej
 
 
 ### 5.5 Análisis setup.py
-
-
-
-
-
-
-
 
 
 ```ruby
@@ -246,10 +232,6 @@ default_args = {
 # los argumentos por defecto determinados anteriormente, tambien se determina
 #schedule_interval=none  que nos indica que se se va a ejecutar mas que cuando 
 # se hace forma manual. 
-
-@weekly	Run once a week at midnight on Sunday morning	0 0 * * 0
-@monthly	Run once a month at midnight of the first day of the month	0 0 1 * *
-@yearly	Run once a year at midnight of January 1	0 0 1 1 *
 training_dag = DAG(
   'agile_data_science_batch_prediction_model_training',
   default_args=default_args,
@@ -276,7 +258,7 @@ spark-submit --master {{ params.master }} \
 # Es en las siguientes lineas donde se definen las operaciones Bash con todos los 
 # campos rellenados hasta ahora 
 # se determina la direccion en la que es escucha al master de spark
-# la direccion del ficher python donde se encuentra toda la logica del DAG
+# la direccion del ficher Python donde se encuentra toda la logica del DAG
 # la direccion que utiliza internamente para determinar direcciones absolutas en el sistema de ficheros
 """
 extract_features_operator = BashOperator(
@@ -308,8 +290,9 @@ train_classifier_model_operator = BashOperator(
 
 Se adjuntan a continuacionuna tabla de los posibles valores que se puede asociar al scheduler_interval en funcion de la periodicidad con que se repite:
 
-| None         | Don’t schedule, use for exclusively “externally triggered” DAGs |
+| Scheduler         |Description |
 | --- | --- |
+| None         | Don’t schedule, use for exclusively “externally triggered” DAGs |
 | @once        |   	Schedule once and only once                                  | 
 | @hourly      |Run once an hour at the beginning of the hour  | 
 | @daily	      |Run once a day at midnight	      | 
