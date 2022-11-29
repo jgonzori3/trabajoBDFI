@@ -127,11 +127,11 @@ Para explicar la arquitectura de Apache Airflow la siguiete imagen es muy ilustr
 
 Donde se pueden destacar los siguientes componentes:
 
-* Scheduler: Se encarga de activar los DAGs y de cargarlos en el ejecutor de tareas.
-* Executor: Maneja las tareas que están en ejecución mandandoselo generalmente a los workers.
-* Webserver: Interfaz web que permite al usuario inspeccionar, activar y depurar los DAGs (estado actual del DAG, ultima ejecución, consulta de logs, etc).
-* Directorio DAG: Ruta donde el usuario puede introducir los DAGs para que se muestren en la interfaz web y se ejecuten en la herramienta. Estos ficheros deberán estar descritos utilizando el lenguaje Python.
-* Metadata Database: utilizada por el Scheduler, el Executor y el servidor web para almacenar el estado.
+* **Scheduler:** Se encarga de activar los DAGs y de cargarlos en el ejecutor de tareas.
+* **Executor:** Maneja las tareas que están en ejecución mandandoselo generalmente a los workers.
+* **Webserver:** Interfaz web que permite al usuario inspeccionar, activar y depurar los DAGs (estado actual del DAG, ultima ejecución, consulta de logs, etc).
+* **Directorio DAG:** Ruta donde el usuario puede introducir los DAGs para que se muestren en la interfaz web y se ejecuten en la herramienta. Estos ficheros deberán estar descritos utilizando el lenguaje Python.
+* **Metadata Database:** utilizada por el Scheduler, el Executor y el servidor web para almacenar el estado.
 
 ### 5.2 Ejecución de entorno virtualizado (opcional)
 
