@@ -70,7 +70,7 @@ Con esta solución el único fichero necesario será el docker-compose.yml
 
 ### 3.1 Pasos para montar el escenario 🚀
 
-Para poder arrancar desde un entorno sin imagenes de máquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero se deberá ejecutar el docker prune en el sistema.
+Para poder arrancar desde un entorno sin imágenes de máquinas virtuales residuales y liberar espacio para arrancar nuestro escenario, lo primero se deberá ejecutar un docker prune en el sistema.
 
 ```
 sudo docker system prune -a
@@ -79,7 +79,7 @@ Seguidamente se descargará el proyecto principal desde el repositorio https://g
 ```
 git clone https://github.com/jgonzori3/trabajoBDFI.git
 ```
-Una vez dentro del proyecto, para poder desplegar todo el escenario desde el fichero docker-compose-yml, nos ubicaremos en el directorio dockerfiles del proyecto con el siguiente comando:
+Una vez dentro del proyecto, para poder desplegar todo el escenario desde el fichero docker-compose.yml, nos ubicaremos en el directorio dockerfiles del proyecto con el siguiente comando:
 ```
 cd practica_big_data_2019/dockerfiles
 ```
